@@ -12,13 +12,13 @@ contract DecentralisedID {
   }
 
   struct ID {
-    uint64 number_ID;
+    uint64 id;
     string userNAme;
     string picture_link;
     string first_name;
     string last_name;
     string date_of_birth;
-    string passport_number;
+    string document_number;
     address user_address;
     membership_type stage;
   }
@@ -26,9 +26,15 @@ contract DecentralisedID {
   error ID_ALREADY_CREATED();
   error ID_DOESNT_EXIST();
   error ALREADY_GOT_MEMBERSHIP_TYPE();
+  error INVALID_AMOUNT();
 
   event IDCreated(uint64 id, string userName, address userAddy);
-  event MembershipAdded();
+  event MembershipAdded(
+    uint64 id,
+    string userName,
+    address userAddy,
+    membership_type stage
+  );
 
   mapping(address => ID) ids;
   uint64 current_id_number = 1;
@@ -75,7 +81,25 @@ contract DecentralisedID {
     if (currentUser.stage == new_membership) {
       revert ALREADY_GOT_MEMBERSHIP_TYPE();
     }
+
+    uint16 requiredPrice;
+
+    if (new_membership == membership_type.Gold) {
+      requiredPrice = Gold_Price;
+    } else if (new_membership == membership_type.Silver) {
+      requiredPrice = Silver_Price;
+    }
+
+    if (msg.value > requiredPrice) {
+      revert INVALID_AMOUNT();
+    }
+
     currentUser.stage = new_membership;
-    emit MembershipAdded();
+    emit MembershipAdded(
+      currentUser.id,
+      currentUser.userNAme,
+      msg.sender,
+      new_membership
+    );
   }
 }
