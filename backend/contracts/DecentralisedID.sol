@@ -19,6 +19,7 @@ contract DecentralisedID {
     string last_name;
     string date_of_birth;
     string document_number;
+    string nationality;
     address user_address;
     membership_type stage;
   }
@@ -45,7 +46,8 @@ contract DecentralisedID {
     string calldata _firstName,
     string calldata _lastName,
     string calldata _dob,
-    string calldata _passportNumber
+    string calldata _documentNumber,
+    string calldata _nationality
   ) external {
     if (ids[msg.sender].user_address != address(0)) {
       revert ID_ALREADY_CREATED();
@@ -58,7 +60,8 @@ contract DecentralisedID {
       _firstName,
       _lastName,
       _dob,
-      _passportNumber,
+      _documentNumber,
+      _nationality,
       msg.sender,
       membership_type.Bronze
     );
@@ -90,7 +93,7 @@ contract DecentralisedID {
       requiredPrice = Silver_Price;
     }
 
-    if (msg.value > requiredPrice) {
+    if (msg.value < requiredPrice) {
       revert INVALID_AMOUNT();
     }
 
