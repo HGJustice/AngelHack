@@ -14,7 +14,6 @@ contract DecentralisedID {
   struct ID {
     uint64 id;
     string userNAme;
-    string picture_link;
     string first_name;
     string last_name;
     string date_of_birth;
@@ -42,7 +41,6 @@ contract DecentralisedID {
 
   function createDID(
     string calldata _userName,
-    string calldata _pictureLink,
     string calldata _firstName,
     string calldata _lastName,
     string calldata _dob,
@@ -56,7 +54,6 @@ contract DecentralisedID {
     ID memory newID = ID(
       current_id_number,
       _userName,
-      _pictureLink,
       _firstName,
       _lastName,
       _dob,
@@ -76,7 +73,7 @@ contract DecentralisedID {
   }
 
   function buyMemebership(membership_type new_membership) external payable {
-    ID memory currentUser = ids[msg.sender];
+    ID storage currentUser = ids[msg.sender];
 
     if (currentUser.user_address == address(0)) {
       revert ID_DOESNT_EXIST();
